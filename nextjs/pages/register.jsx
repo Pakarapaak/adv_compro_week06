@@ -1,9 +1,17 @@
+import styles from "@/styles/register.module.css";
 import { useState } from "react";
-import { Container, TextField, Button, Typography, Stack } from "@mui/material";
 import Swal from "sweetalert2";
 
 export default function Register() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    name: "",
+    phone: "",
+    address: "",
+  });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -11,6 +19,13 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Password confirmation check
+    if (form.password !== form.confirmPassword) {
+      Swal.fire({ title: "Error", text: "Passwords do not match", icon: "error" });
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost:8000/api/register/", {
         method: "POST",
@@ -24,37 +39,97 @@ export default function Register() {
       }
 
       Swal.fire({ title: "Success!", text: "User registered.", icon: "success" });
-      setForm({ username: "", password: "" });
+      setForm({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        name: "",
+        phone: "",
+        address: "",
+      });
     } catch (err) {
       Swal.fire({ title: "Error", text: err.message, icon: "error" });
     }
   };
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Typography variant="h5">Register</Typography>
-      <form onSubmit={handleSubmit}>
-        <Stack spacing={2}>
-          <TextField
-            label="Username"
+    <div className={styles.pageWrapper}>
+      <div className={styles.container}>
+        <h2 className={styles.title}>Register</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            className={styles.input}
+            type="text"
             name="username"
+            placeholder="Username"
             value={form.username}
             onChange={handleChange}
             required
           />
-          <TextField
-            label="Password"
-            name="password"
+          <input
+            className={styles.input}
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            className={styles.input}
             type="password"
+            name="password"
+            placeholder="Password"
             value={form.password}
             onChange={handleChange}
             required
           />
-          <Button type="submit" variant="contained">
+          <input
+            className={styles.input}
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          <input
+            className={styles.input}
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <input
+            className={styles.input}
+            type="tel"
+            name="phone"
+            placeholder="Phone Number"
+            value={form.phone}
+            onChange={handleChange}
+            required
+          />
+          <input
+            className={styles.input}
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={form.address}
+            onChange={handleChange}
+            required
+          />
+
+          <button className={styles.button} type="submit">
             Register
-          </Button>
-        </Stack>
-      </form>
-    </Container>
+          </button>
+        </form>
+        <p className={styles.infoText}>
+          Already have an account? <a href="/login">Login</a>
+        </p>
+      </div>
+    </div>
   );
 }

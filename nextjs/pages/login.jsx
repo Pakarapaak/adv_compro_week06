@@ -1,5 +1,5 @@
+import styles from "@/styles/register.module.css"; // reuse same CSS
 import { useState } from "react";
-import { Container, TextField, Button, Typography, Stack } from "@mui/material";
 import Swal from "sweetalert2";
 
 export default function Login() {
@@ -18,16 +18,9 @@ export default function Login() {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) {
-        let errorMsg = "Login failed";
-        try {
-          const errorData = await res.json();
-          errorMsg = errorData.detail || errorMsg;
-        } catch {}
-        throw new Error(errorMsg);
-      }
-
       const result = await res.json();
+      if (!res.ok) throw new Error(result.detail || "Login failed");
+
       Swal.fire({ title: "Success!", text: result.message, icon: "success" });
       setForm({ username: "", password: "" });
     } catch (err) {
@@ -36,30 +29,37 @@ export default function Login() {
   };
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Typography variant="h5">Login</Typography>
-      <form onSubmit={handleSubmit}>
-        <Stack spacing={2}>
-          <TextField
-            label="Username"
+    <div className={styles.pageWrapper}>
+      <div className={styles.container}>
+        <h2 className={styles.title}>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            className={styles.input}
+            type="text"
             name="username"
+            placeholder="Username"
             value={form.username}
             onChange={handleChange}
             required
           />
-          <TextField
-            label="Password"
-            name="password"
+          <input
+            className={styles.input}
             type="password"
+            name="password"
+            placeholder="Password"
             value={form.password}
             onChange={handleChange}
             required
           />
-          <Button type="submit" variant="contained">
+
+          <button className={styles.button} type="submit">
             Login
-          </Button>
-        </Stack>
-      </form>
-    </Container>
+          </button>
+        </form>
+        <p className={styles.infoText}>
+          Don't have an account? <a href="/register">Register</a>
+        </p>
+      </div>
+    </div>
   );
 }
