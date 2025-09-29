@@ -1,16 +1,26 @@
-import styles from "@/styles/register.module.css"; // reuse same CSS
-import { useState } from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 import Swal from "sweetalert2";
+import styles from "@/styles/register.module.css";
+import useBearStore from "@/store/useBearStore";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
+  const router = useRouter();
+  const login = useBearStore((state) => state.login);
 
+  // Handle input changes
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
+  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const res = await fetch("http://localhost:8000/api/login/", {
         method: "POST",
@@ -19,12 +29,29 @@ export default function Login() {
       });
 
       const result = await res.json();
-      if (!res.ok) throw new Error(result.detail || "Login failed");
 
-      Swal.fire({ title: "Success!", text: result.message, icon: "success" });
-      setForm({ username: "", password: "" });
+      if (!res.ok) {
+        throw new Error(result.detail || "Login failed");
+      }
+
+      // Store user in Zustand state
+      login({ username: form.username });
+
+      // Success alert
+      Swal.fire({
+        title: "Success!",
+        text: result.message || "Logged in successfully!",
+        icon: "success",
+        confirmButtonText: "Continue",
+      }).then(() => {
+        router.push("/Home");
+      });
     } catch (err) {
-      Swal.fire({ title: "Error", text: err.message, icon: "error" });
+      Swal.fire({
+        title: "Error",
+        text: err.message,
+        icon: "error",
+      });
     }
   };
 
@@ -51,14 +78,10 @@ export default function Login() {
             onChange={handleChange}
             required
           />
-
           <button className={styles.button} type="submit">
             Login
           </button>
         </form>
-        <p className={styles.infoText}>
-          Don't have an account? <a href="/register">Register</a>
-        </p>
       </div>
     </div>
   );

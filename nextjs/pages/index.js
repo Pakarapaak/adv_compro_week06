@@ -1,19 +1,12 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import Grid from "@mui/material/Grid2";
-import { Box, Typography, Button, TextField } from "@mui/material"; // Use by LoginForm
-import useBearStore from "@/store/useBearStore";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
-function Home() {
-  return (
-    <>
+export default function Home() {
+  const router = useRouter();
 
-      <main>
-        <Box>This is index page</Box>
-      </main>
-    </>
-  );
+  useEffect(() => {
+    router.replace("/Home"); // redirect to additem page
+  }, [router]);
+
+  return null; // no UI
 }
-
-export default Home;

@@ -1,6 +1,6 @@
 from databases import Database
 
-# PostgreSQL connection settings (adjust if needed)
+# PostgreSQL connection settings
 POSTGRES_USER = "temp"
 POSTGRES_PASSWORD = "temp"
 POSTGRES_DB = "advcompro"
